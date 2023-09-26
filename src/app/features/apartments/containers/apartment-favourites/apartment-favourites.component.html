@@ -1,0 +1,18 @@
+<div class="container">
+  <h1>Your favourites apartments</h1>
+    <app-apartment-preview-list
+      *ngIf="(favouritesApartments$ | async)?.length"
+      class="apartment-preview"
+        [favourites]="(favourites$ | async)!"
+        [apartments]="favouritesApartments$ | async">
+    </app-apartment-preview-list>
+
+  <div *ngIf="!((favouritesApartments$ | async)?.length)" class="not-found">
+    No item selected
+  </div>
+</div>
+
+
+
+
+

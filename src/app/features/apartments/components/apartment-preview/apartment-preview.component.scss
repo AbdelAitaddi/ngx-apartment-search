@@ -1,0 +1,43 @@
+.apartment-preview {
+  max-width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  &:hover {
+    cursor: pointer;
+    background-color: whitesmoke;
+    box-shadow: 1px 8px 20px #424242;
+
+    -webkit-transition:  box-shadow .4s ease-in;
+    border: 1px solid #939191;
+
+    mat-card-title {
+      color: #3f51b5;
+    }
+
+    mat-card-subtitle {
+      color: #000;
+    }
+
+    mat-card-content {
+      color: rgba(0, 0, 0, 0.54);
+    }
+  }
+
+  .detail {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  div.detail + div.detail {
+    margin-top: 8px;
+  }
+}
+
+
+img, mat-card-title, mat-card-subtitle, mat-card-content {
+  padding: 8px;
+}
+
+

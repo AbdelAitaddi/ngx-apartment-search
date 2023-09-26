@@ -1,0 +1,24 @@
+<mat-card class="apartment-preview" [routerLink]="['/apartment/detail/', apartment.id]" >
+  <img mat-card-image [src]="apartment.teaserImageUrl">
+  <mat-card-title>{{ apartment.title | ellipsis}}</mat-card-title>
+  <mat-card-subtitle>
+    <strong *ngIf="apartment.address as address">
+      <span [innerHtml]="apartmentAddress | highlighter:searchText:'letter'" ></span><br>
+      {{ address.borough }}
+    </strong>
+  </mat-card-subtitle>
+  <mat-card-content>
+      <div *ngIf="apartment.details as details" class="detail">
+      <div>{{ details.numberOfRooms }} rooms</div>
+      <div> {{ details.size }} sqm</div>
+      </div>
+      <div *ngIf="apartment.details as details" class="detail">
+        <span>{{ details.floor }} floor</span>
+        <span> {{ details.rent.totalRent ? totalPrice : ''}}</span>
+      </div>
+  </mat-card-content>
+  <mat-card-actions align="end">
+    <mat-icon color="accent">{{ isFavourite ? 'favorite' : 'favorite_outline' }}</mat-icon>
+  </mat-card-actions>
+</mat-card>
+

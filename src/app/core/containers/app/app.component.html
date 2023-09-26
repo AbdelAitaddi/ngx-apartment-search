@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button  (click)="sidenav.toggle()" >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div class="app-name" routerLink="/">ApartmentSearch</div>
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <mat-sidenav
+    #sidenav
+    [mode]="isBiggerScreen() ? 'over' : 'side'"
+    [opened]="opened"
+    [fixedInViewport]="true">
+
+    <mat-nav-list>
+      <ng-container *ngFor="let nav of navList">
+        <a
+          mat-list-item
+          (click)="sidenav.toggle()"
+          [routerLink]="nav.route"
+          [routerLinkActive]="'active'">
+          <mat-icon  matListItemIcon class="icon-item">{{nav.icon}}</mat-icon>
+          <span mat-line matListItemTitle>{{nav.name}}</span>
+          <span mat-line matListItemLine class="secondary">{{nav.hint}}</span>
+        </a>
+
+      </ng-container>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <div *ngIf="(loading$ | async) === true" class="loading-indicator">
+      <mat-spinner mode="indeterminate"></mat-spinner>
+    </div>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+
+</mat-sidenav-container>

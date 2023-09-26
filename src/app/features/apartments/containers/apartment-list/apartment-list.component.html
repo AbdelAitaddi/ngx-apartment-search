@@ -1,0 +1,25 @@
+<div class="container">
+    <app-apartment-filter
+        [boroughsCollection]="(boroughs$ | async)!"
+        [searchTerm]="(searchTerm$ | async)!"
+        (selectBoroughs)="onSelectedBorough($event)"
+        (search)="onSearch($event)">
+    </app-apartment-filter>
+
+    <app-apartment-preview-list
+      class="apartment-preview"
+        [city]="searchTerm$ | async"
+        [favourites]="(favourites$ | async)!"
+        [apartments]="apartments$ | async"
+        [selectedBorough]="(selectedBorough$ | async)!">
+    </app-apartment-preview-list>
+
+  <div *ngIf="!((apartments$ | async)?.length)" class="no-results">
+    <strong>your search did not match any apartments.</strong>
+  </div>
+</div>
+
+
+
+
+

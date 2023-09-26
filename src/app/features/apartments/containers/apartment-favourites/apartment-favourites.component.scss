@@ -1,0 +1,27 @@
+.apartmentCout {
+  margin: 36px 0 28px;
+  font-weight: 600;
+  font-size: 25px;
+  color: #3f51b5;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.apartment-preview {
+  display: flex;
+  flex-direction: column;
+}
+
+
+h1 {
+  align-self: center;
+}
+
+.not-found {
+  align-self: center;
+  margin-top: 10%;
+}
