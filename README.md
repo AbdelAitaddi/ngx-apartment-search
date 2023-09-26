@@ -1,6 +1,6 @@
-## ngxApartmentSearch
+# ngxApartmentSearch
 
-this application is implemented with Angular and own rxjs State management. Design was made with Angular material.
+> Boilerplate project for getting started with RxJS State Management,  Components / Containers architecture. Design was made with Angular material.
 
 the application offers:
 - list of news.
@@ -23,5 +23,6 @@ this Boilerplate project consists of writing a Angular with the purpose getting 
 
 ## Instalation
 
-Run first `npm ci`.
-Run `npm run db` for a dev server and `ng s` for database. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- Run first `npm ci`.
+- Run `npm run db` for for database and `ng s` for dev server. Navigate to `http://localhost:4200/`.
+  The application will automatically reload if you change any of the source files.
