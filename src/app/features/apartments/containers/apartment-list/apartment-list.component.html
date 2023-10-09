@@ -1,25 +1,26 @@
-<div class="container">
-    <app-apartment-filter
-        [boroughsCollection]="(boroughs$ | async)!"
-        [searchTerm]="(searchTerm$ | async)!"
-        (selectBoroughs)="onSelectedBorough($event)"
-        (search)="onSearch($event)">
-    </app-apartment-filter>
+<div class="container" *ngIf="viewModel$ | async as vm">
+  <app-apartment-filter
+    [boroughs]="vm.boroughs"
+    [cities]="vm.cities"
+    [selectedCity]="vm.selectedCity"
+    [selectedBorough]="vm.selectedBorough"
+    (boroughSelected)="onBoroughSelected($event)"
+    (citySelected)="onCitySelected($event)"
+  >
+  </app-apartment-filter>
 
-    <app-apartment-preview-list
-      class="apartment-preview"
-        [city]="searchTerm$ | async"
-        [favourites]="(favourites$ | async)!"
-        [apartments]="apartments$ | async"
-        [selectedBorough]="(selectedBorough$ | async)!">
-    </app-apartment-preview-list>
+  <app-apartment-preview-list
+    class="apartment-preview"
+    [favourites]="vm.favourites"
+    [apartments]="vm.apartmentByCity | byBoroughs : vm.selectedBorough"
+  >
+  </app-apartment-preview-list>
 
-  <div *ngIf="!((apartments$ | async)?.length)" class="no-results">
+  <div *ngIf="vm.loaded && !vm.apartmentByCity.length" class="no-results">
     <strong>your search did not match any apartments.</strong>
   </div>
+
+  <div *ngIf="!vm.loading && !vm.loaded" class="loading-error">
+    <strong>An error occurred while loading data</strong>
+  </div>
 </div>
-
-
-
-
-

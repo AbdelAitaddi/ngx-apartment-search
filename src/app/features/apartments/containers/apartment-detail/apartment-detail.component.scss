@@ -1,5 +1,5 @@
-.container {
-  display: flex;
-  justify-content: center;
-}
+@use "../../../../../styles/mixins/layout";
 
+.container {
+  @include layout.flex();
+}

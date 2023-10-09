@@ -1,16 +1,16 @@
+@use "../../../../../styles/mixins/layout";
+@use "../../../../../styles/base/sizes";
+
 .container {
-  display: flex;
-  flex-direction: column;
   width: 100%;
+  @include layout.flex(column, initial, initial, initial);
 }
 
 .apartment-preview {
-  display: flex;
-  flex-direction: column;
+  @include layout.flex(column, initial, initial, initial);
 }
 
-.no-results {
-  margin: 0 auto;
+.no-results,
+.loading-error {
+  margin: sizes.$extra-large auto;
 }
-
-

@@ -1,16 +1,15 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 // models
-import { Apartment } from '../../features/apartments/models';
+import { All_Cities, Apartment } from '../../features/apartments/models';
 
-@Pipe({ name: 'byBoroughs' })
+@Pipe({
+  name: 'byBoroughs',
+})
 export class BoroughsPipe implements PipeTransform {
-
-  transform(apartments: Apartment[], boroughs: string | null) {
-    return boroughs?.length
-      ? apartments.filter(apartment => boroughs.includes(apartment.address.borough))
-      : apartments
-    ;
+  transform(apartments: Apartment[], borough: string | typeof All_Cities) {
+    return borough !== All_Cities
+      ? apartments.filter((apartment) => borough === apartment?.address?.borough)
+      : apartments;
   }
-
 }

@@ -1,26 +1,27 @@
-import {Injectable} from "@angular/core";
-import {uniq} from "lodash";
+import { Injectable } from '@angular/core';
+import { uniq } from 'lodash';
 
 // models
-import {Apartment} from "../models";
+import { All_Cities, Apartment, CityTypes, CityTypesFilter } from '../models';
 
 // services
-import {ApartmentsStore} from "../store";
-import {ApartmentsService} from "../services/apartments.service";
-import {GlobalLoadingIndicatorService} from "../../../core/services";
+import { ApartmentsStore } from '../store';
+import { ApartmentsService } from '../services';
+import { GlobalLoadingIndicatorService } from '../../../core/services';
+import { ApartmentHelperService } from '../helpers/apartment-helper.service';
 
 // rxjs
-import { finalize, Observable, throwError} from "rxjs";
-import {catchError, map, startWith, take, tap, withLatestFrom} from "rxjs/operators";
-import {CityTypes} from "../models/city.model";
+import { finalize, Observable, retry, throwError } from 'rxjs';
+import { catchError, combineLatestWith, map, startWith, take, tap, withLatestFrom } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ApartmentFacadeService {
   constructor(
     private loadingIndicatorService: GlobalLoadingIndicatorService,
     private apartmentsService: ApartmentsService,
+    private apartmentHelper: ApartmentHelperService,
     private store: ApartmentsStore
   ) {}
 
@@ -40,12 +41,20 @@ export class ApartmentFacadeService {
     return this.store.select<string[]>('favourites');
   }
 
-  set searchTerm(term: string | null) {
-    this.store.set('searchTerm', term);
+  set selectedCity(city: CityTypesFilter) {
+    this.store.set('selectedCity', city);
   }
 
-  get searchTerm$(): Observable<string> {
-    return this.store.select<string>('searchTerm');
+  get selectedCity$(): Observable<CityTypesFilter> {
+    return this.store.select<CityTypesFilter>('selectedCity');
+  }
+
+  set selectedBorough(selectedBorough: string | typeof All_Cities) {
+    this.store.set('selectedBorough', selectedBorough);
+  }
+
+  get selectedBorough$(): Observable<CityTypesFilter> {
+    return this.store.select<CityTypesFilter>('selectedBorough');
   }
 
   set selectedApartment(apartment: Apartment | null) {
@@ -56,19 +65,11 @@ export class ApartmentFacadeService {
     return this.store.select<Apartment | null>('selectedApartment');
   }
 
-  set selectedBorough(selectedBorough: CityTypes | null) {
-    this.store.set('selectedBorough', selectedBorough);
-  }
-
-  get selectedBorough$(): Observable<CityTypes | null> {
-    return this.store.select<CityTypes | null>('selectedBorough');
-  }
-
   set loading(loading: boolean) {
     this.store.set('loading', loading);
   }
 
-  get loading(): Observable<boolean> {
+  get loading$(): Observable<boolean> {
     return this.store.select<boolean>('loading');
   }
 
@@ -82,21 +83,31 @@ export class ApartmentFacadeService {
 
   /////////////////  Side effects //////////////
 
-  get boroughs$(): Observable<{ id: number, text: string }[]> {
-    return this.searchTerm$.pipe(
-      withLatestFrom(this.apartments$),
-      map(([searchTerm, apartments]: [string, Apartment[]]) => this.getMappedBoroughs(apartments, searchTerm)),
-      startWith([]),
-    )
+  get boroughs$(): Observable<string[]> {
+    return this.selectedCity$.pipe(
+      combineLatestWith(this.apartments$),
+      map(([selectedCity, apartments]: [CityTypesFilter, Apartment[]]) =>
+        this.apartmentHelper.getMappedBoroughs(apartments, selectedCity)
+      ),
+      startWith([])
+    );
+  }
+
+  get cities$(): Observable<Array<CityTypes>> {
+    return this.apartments$.pipe(
+      map((apartments: Apartment[]) => uniq(apartments.map(({ address: { city } }: Apartment) => city)))
+    );
   }
 
   get apartmentByCity$(): Observable<Apartment[]> {
-    return this.searchTerm$.pipe(
-      withLatestFrom(this.apartments$),
-      map(([term, apartments]: [string, Apartment[]]) => term || term === ''
-        ? this.filterByCityName(apartments, term)
-        : apartments
+    return this.selectedCity$.pipe(
+      combineLatestWith(this.apartments$),
+      map(([selectedCity, apartments]: [CityTypesFilter, Apartment[]]) =>
+        selectedCity === All_Cities
+          ? apartments
+          : this.apartmentHelper.filterByCityName(apartments, selectedCity as CityTypes)
       ),
+      startWith([])
     );
   }
 
@@ -104,84 +115,67 @@ export class ApartmentFacadeService {
     return this.apartments$.pipe(
       withLatestFrom(this.favourites$),
       map(([apartments, favourites]: [Apartment[], string[]]) =>
-        apartments.filter((apartment) =>  favourites.includes(apartment.id!))
+        apartments.filter((apartment) => favourites.includes(apartment.id!))
       )
     );
   }
 
-  updateSelectedBorough(boroughs: CityTypes | null) {
-    this.selectedBorough = boroughs;
+  updateSelectedBorough(selectedBorough: string | typeof All_Cities) {
+    this.selectedBorough = selectedBorough;
   }
 
-  updateSearchTerm(searchTerm: string = '') {
-    this.searchTerm = searchTerm;
+  updateSelectedCity(selectedCity: CityTypesFilter) {
+    this.selectedCity = selectedCity;
   }
 
   getApartments(): Observable<Apartment[]> {
     this.loaded = false;
     this.loading = true;
     this.loadingIndicatorService.setLoading(true);
-    return this.apartmentsService.getApartments()
-      .pipe(
-        map((apartments: Apartment[]) => apartments.filter((apartment: Apartment) => apartment.availableFromNowOn)),
-        tap((apartments: Apartment[]) => {
-          this.apartments = apartments;
-          this.loaded = true;
-        }),
-        catchError(error => throwError(error)),
-        finalize(() => {
-          this.loading = false;
-          this.loadingIndicatorService.setLoading(false);
-        })
-      );
+    return this.apartmentsService.getApartments().pipe(
+      map((apartments: Apartment[]) => apartments.filter((apartment: Apartment) => apartment.availableFromNowOn)),
+      tap((apartments: Apartment[]) => {
+        this.apartments = apartments;
+        this.loaded = true;
+      }),
+      catchError((error) => throwError(error)),
+      finalize(() => {
+        this.loading = false;
+        this.loadingIndicatorService.setLoading(false);
+      }),
+      retry({
+        count: 3,
+        delay: 1000,
+        resetOnSuccess: true,
+      })
+    );
   }
 
   getApartment(id: string): Observable<Apartment> {
     this.loadingIndicatorService.setLoading(true);
-    return this.apartmentsService.getApartment(id)
-      .pipe(
-        tap((apartment: Apartment) => {
-          this.selectedApartment = apartment;
-        }),
-        catchError(error => throwError(error)),
-        finalize(() => this.loadingIndicatorService.setLoading(false))
-      );
-  }
-
-  addToFavourites(apartmentId: string) {
-    this.favourites$.pipe(
-      take(1),
-    ).subscribe((favourites: string[]) => {
-      this.favourites = [...favourites, apartmentId]
-    })
-
-  }
-
-  removeFromFavourites(apartmentId: string) {
-    this.favourites$.pipe(
-      take(1),
-    ).subscribe((favourites: string[]) => {
-      this.favourites = favourites.filter(favourite => favourite !== apartmentId);
-    })
-  }
-
-  private filterByCityName(apartments: Apartment[], term: string): Apartment[] {
-    return apartments.filter(
-      ({ address: { city } }: Apartment) => city.toLocaleLowerCase().search(term.toLocaleLowerCase()) > -1
+    return this.apartmentsService.getApartment(id).pipe(
+      tap((apartment: Apartment) => {
+        this.selectedApartment = apartment;
+      }),
+      catchError((error) => throwError(error)),
+      finalize(() => this.loadingIndicatorService.setLoading(false)),
+      retry({
+        count: 3,
+        delay: 1000,
+        resetOnSuccess: true,
+      })
     );
   }
 
-  private getMappedBoroughs(apartments: Apartment[], searchTerm: string): { id: number, text: string }[] {
-    const apartmentsBvCity = searchTerm
-    ? apartments
-        .filter((apartment: Apartment) => apartment.address.city.toLocaleLowerCase().search(searchTerm.toLocaleLowerCase()) > -1)
-    : apartments;
-
-    return uniq(
-      apartmentsBvCity
-       .map(({ address: { borough } }: Apartment) => borough)
-       .map((borough: string, index: number) => ({id: index + 1, text: borough }))
-    )
+  addToFavourites(apartmentId: string) {
+    this.favourites$.pipe(take(1)).subscribe((favourites: string[]) => {
+      this.favourites = [...favourites, apartmentId];
+    });
   }
 
+  removeFromFavourites(apartmentId: string) {
+    this.favourites$.pipe(take(1)).subscribe((favourites: string[]) => {
+      this.favourites = favourites.filter((favourite) => favourite !== apartmentId);
+    });
+  }
 }

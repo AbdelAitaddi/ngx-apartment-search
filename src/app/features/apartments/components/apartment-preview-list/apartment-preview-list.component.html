@@ -1,12 +1,6 @@
-<div class="apartment-count">
- {{ (apartments | byBoroughs: selectedBorough).length }} Apartments <span *ngIf="(apartments | byBoroughs: selectedBorough).length "> in  {{ (city || 'Deutschland') | uppercase }}</span>
-</div>
+<div class="apartment-count">{{ apartments.length }} Apartments</div>
 
 <div class="container">
-  <app-apartment-preview *ngFor="let apartment of (apartments | byBoroughs: selectedBorough)"
-    [apartment]="apartment"
-    [favourites]="favourites"
-    [searchText]="city">
+  <app-apartment-preview *ngFor="let apartment of apartments" [apartment]="apartment" [favourites]="favourites">
   </app-apartment-preview>
 </div>
-

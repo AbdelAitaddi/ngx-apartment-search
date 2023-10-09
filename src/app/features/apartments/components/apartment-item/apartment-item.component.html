@@ -1,18 +1,16 @@
 <mat-card class="apartment-detail">
   <mat-card-header>
     <mat-card-title-group class="card-title-group">
-      <img mat-card-xl-image [src]="apartment.teaserImageUrl" alt="{{apartment.title}}" >
+      <img mat-card-xl-image [src]="apartment.teaserImageUrl" alt="{{ apartment.title }}" />
       <mat-card-title>
-          {{ apartment.title }}
-          <mat-icon color="accent" [class.hide]="!selected">favorite</mat-icon>
+        {{ apartment.title }}
+        <mat-icon color="accent" [class.hide]="!selected" [svgIcon]="Icon_list.heartCheck"></mat-icon>
       </mat-card-title>
       <mat-card-subtitle>
         <div class="info">
+          <div><strong>address: </strong> {{ apartmentAddress }} - ({{ apartment.address.borough }})</div>
           <div>
-            <strong>address: </strong> {{ apartmentAddress }} - ({{ apartment.address.borough }})
-          </div>
-          <div>
-            <strong>rooms:  </strong>
+            <strong>rooms: </strong>
             <span>{{ apartment.details.numberOfRooms }}</span>
           </div>
           <div>
@@ -25,26 +23,25 @@
           </div>
           <div>
             <strong>totalRent: </strong>
-            <span> {{ apartment.details.rent.totalRent ? totalPrice : ''}}</span>
+            <span> {{ apartment.details.rent.totalRent ? totalPrice : '' }}</span>
           </div>
         </div>
       </mat-card-subtitle>
     </mat-card-title-group>
   </mat-card-header>
   <mat-card-content>
-  {{apartment.description}}
+    {{ apartment.description }}
   </mat-card-content>
   <mat-card-footer *ngIf="apartment.details.rent as rent">
-    Deposit: {{rent.deposit }}, <cite title="internalId"> {{ rentDetailInfo }}</cite>
+    Deposit: {{ rent.deposit }}, <cite title="internalId"> {{ rentDetailInfo }}</cite>
   </mat-card-footer>
   <mat-card-actions>
-    <button mat-fab extended  color="primary" [routerLink]="['/apartment/list/', apartment.address.city]">
-      <mat-icon>arrow_back</mat-icon> back
+    <button mat-fab extended color="primary" (click)="back.emit()">
+      <mat-icon [svgIcon]="Icon_list.back"></mat-icon> back
     </button>
-    <button mat-fab extended color="{{ selected ? 'warn' : 'accent'}}" (click)="toggleFavourite(apartment.id!)">
-      <mat-icon>{{ selected ? 'delete' : 'favorite'}}</mat-icon>{{ selected ? 'unlike' : 'like' }}
+    <button mat-fab extended color="{{ selected ? 'warn' : 'accent' }}" (click)="toggleFavourite(apartment.id!)">
+      <mat-icon [svgIcon]="selected ? Icon_list.heartMinus : Icon_list.heartPlus"></mat-icon
+      >{{ selected ? 'unlike' : 'like' }}
     </button>
-
   </mat-card-actions>
 </mat-card>
-

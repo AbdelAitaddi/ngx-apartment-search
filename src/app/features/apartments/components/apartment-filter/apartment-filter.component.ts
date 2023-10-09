@@ -1,22 +1,12 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-} from '@angular/core';
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {FormBuilder, FormControl} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { FormBuilder, FormControl } from '@angular/forms';
 
 // models
-import {Cities, CityTypes} from "../../models/city.model";
+import { All_Cities, CityTypes, CityTypesFilter } from '../../models';
 
 // rxjs
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
-
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -25,55 +15,40 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./apartment-filter.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApartmentFilterComponent implements OnInit, OnDestroy {
-  @Output() selectBoroughs = new EventEmitter<CityTypes | null>();
-  @Output() search = new EventEmitter<string>();
-  @Input() boroughsCollection: { id: number, text: string }[];
-  @Input() set searchTerm(term: string) {
-    this.searchControl.setValue(term, { emitEvent: false});
-    this.boroughsControl.setValue('', { emitEvent: true});
-  };
+export class ApartmentFilterComponent implements OnInit {
+  @Input() set selectedCity(city: CityTypesFilter) {
+    this.cityControl.setValue(city, { emitEvent: false });
+  }
+  @Input() set selectedBorough(borough: string | typeof All_Cities) {
+    this.boroughControl.setValue(borough, { emitEvent: false });
+  }
+  @Input() boroughs: string[] = [];
+  @Input() cities: CityTypes[] = [];
+  @Output() boroughSelected = new EventEmitter<string | typeof All_Cities>();
+  @Output() citySelected = new EventEmitter<CityTypesFilter>();
 
-  cities: { id: string, text: string }[] = Object
-    .keys(Cities)
-    .reduce((cities, city) => ([
-      ...cities,
-      { id: city, text: city }
-    ]), [] as { id: string, text: string }[]);
+  private fb = new FormBuilder();
 
   form = this.fb.group({
-    search: [''],
-    boroughs: [''],
+    city: All_Cities,
+    borough: All_Cities,
   });
 
-  constructor(private fb: FormBuilder) {}
-
   ngOnInit() {
-    this.searchControl
-      .valueChanges
-      .pipe(
-        untilDestroyed(this),
-        debounceTime(400),
-        distinctUntilChanged(),
-      )
-      .subscribe(searchTerm => this.search.emit(searchTerm));
+    this.cityControl.valueChanges
+      .pipe(untilDestroyed(this), distinctUntilChanged())
+      .subscribe((selectedCity) => this.citySelected.emit(selectedCity));
 
-      this.boroughsControl
-        .valueChanges
-        .pipe(
-          untilDestroyed(this),
-        )
-        .subscribe(value => this.selectBoroughs.emit(value));
+    this.boroughControl.valueChanges
+      .pipe(untilDestroyed(this), distinctUntilChanged())
+      .subscribe((value) => this.boroughSelected.emit(value));
   }
 
-  get searchControl() {
-    return this.form.get('search') as FormControl;
+  get cityControl() {
+    return this.form.get('city') as FormControl;
   }
 
-  get boroughsControl() {
-    return this.form.get('boroughs') as FormControl;
-  }
-
-  ngOnDestroy() {
+  get boroughControl() {
+    return this.form.get('borough') as FormControl;
   }
 }

@@ -1,5 +1,8 @@
+@use "../../../../styles/mixins/layout";
+@use "../../../../styles/base/sizes";
+
 :host {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include layout.flex();
+  height: 100%;
+  font-size: sizes.$medium-plus;
 }

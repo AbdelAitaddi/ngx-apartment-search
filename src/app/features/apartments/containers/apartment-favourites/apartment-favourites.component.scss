@@ -1,27 +1,21 @@
-.apartmentCout {
-  margin: 36px 0 28px;
-  font-weight: 600;
-  font-size: 25px;
-  color: #3f51b5;
-}
+@use "../../../../../styles/mixins/layout";
+@use "../../../../../styles/base/sizes";
 
 .container {
-  display: flex;
-  flex-direction: column;
   width: 100%;
+  @include layout.flex(column, initial, initial, initial);
 }
 
 .apartment-preview {
-  display: flex;
-  flex-direction: column;
+  @include layout.flex(column, initial, initial, initial);
 }
-
 
 h1 {
   align-self: center;
 }
 
-.not-found {
-  align-self: center;
-  margin-top: 10%;
+.no-results,
+.loading-error {
+  margin: 10% auto;
+  font-size: sizes.$medium;
 }

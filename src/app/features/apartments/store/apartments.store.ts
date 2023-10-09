@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 
-// models
-import { ApartmentsState } from './apartments.state';
-
 // services
-import {Store} from "./store.service";
+import { Store } from './store.service';
+
+// models
+import { All_Cities } from '../models';
+import { ApartmentsState } from './apartments.state';
 
 // Initial state
 const initialState: ApartmentsState = {
   apartments: [],
-  selectedApartment: null,
   favourites: [],
-  selectedBorough: null,
-  searchTerm: '',
+  selectedApartment: null,
+  selectedBorough: All_Cities,
+  selectedCity: All_Cities,
   loaded: false,
-  loading: false
+  loading: false,
 };
 
 @Injectable({

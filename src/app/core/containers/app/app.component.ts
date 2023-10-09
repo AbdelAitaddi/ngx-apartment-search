@@ -1,6 +1,17 @@
-import {ChangeDetectionStrategy, Component, HostListener, ViewChild} from '@angular/core';
-import {GlobalLoadingIndicatorService} from "../../services";
-import {MatSidenav} from "@angular/material/sidenav";
+import { ChangeDetectionStrategy, Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+
+// service
+import { GlobalLoadingIndicatorService } from '../../services';
+
+// components
+
+// models
+import { nav_List, NavItem } from '../../models';
+
+// rxjs
+import { Observable } from 'rxjs';
+import { Icon_list, IconTypes } from '../../services/icon.service';
 
 @Component({
   selector: 'app-root',
@@ -8,25 +19,20 @@ import {MatSidenav} from "@angular/material/sidenav";
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent  {
-  loading$ = this.loadingIndicatorService.loading$;
-
-  constructor(
-    private loadingIndicatorService: GlobalLoadingIndicatorService
-  ) {}
-
+export class AppComponent implements OnInit {
   @ViewChild('sidenav', { static: true }) sidenav!: MatSidenav;
 
-  readonly navList = [
-    {route: '/home', name: 'Home', icon: 'home', hint: 'view app description'},
-    {route: '/apartment/list', name: 'Apartments', icon: 'real_estate_agent', hint: 'find your next flat'},
-    {route: '/apartment/favourites', name: 'My Favourites', icon: 'favorite',  hint: 'view you favourites'}
-  ];
+  readonly navList: NavItem[] = nav_List;
+  readonly locationCityIcon: IconTypes = Icon_list.locationCity;
 
+  loading$: Observable<boolean>;
   opened = false;
 
+  constructor(private loadingIndicatorService: GlobalLoadingIndicatorService) {}
+
   ngOnInit() {
-    this.opened = window.innerWidth < 992;
+    this.loading$ = this.loadingIndicatorService.loading$;
+    this.opened = window.innerWidth < 768;
   }
 
   @HostListener('window:resize', ['$event'])
@@ -34,9 +40,9 @@ export class AppComponent  {
     this.opened = !((event?.target as Window).innerWidth < 768);
   }
 
-  isBiggerScreen() {
-    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-    return Boolean(width < 992);
+  get isBiggerScreen(): 'over' | 'side' {
+    return Boolean((window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth) < 992)
+      ? 'over'
+      : 'side';
   }
-
 }

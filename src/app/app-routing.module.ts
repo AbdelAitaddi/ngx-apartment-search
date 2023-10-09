@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 // containers
 import * as fromContainers from './core/containers';
@@ -8,25 +8,24 @@ import * as fromContainers from './core/containers';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
-    pathMatch: 'full'
+    redirectTo: 'apartment/list',
+    pathMatch: 'full',
   },
   {
     path: 'apartment',
-    loadChildren: () => import('./features/apartments/apartments.module').then((m) => m.ApartmentsModule)
+    loadChildren: () => import('./features/apartments/apartments.module').then((m) => m.ApartmentsModule),
   },
   {
-    path: 'home',
-    component: fromContainers.HomeComponent
+    path: 'about',
+    component: fromContainers.AboutComponent,
   },
   {
     path: '**',
-    component: fromContainers.PageNotFoundComponent
+    component: fromContainers.PageNotFoundComponent,
   },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: false })],
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, useHash: false })],
 })
-export class AppRoutingModule { }
-
+export class AppRoutingModule {}

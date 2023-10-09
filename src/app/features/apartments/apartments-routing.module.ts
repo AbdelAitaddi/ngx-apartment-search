@@ -20,25 +20,22 @@ const routes: Routes = [
         path: ':cityId',
         component: fromContainers.ApartmentListComponent,
       },
-    ]
+    ],
   },
   {
     path: 'detail/:apartmentId',
     canActivate: [ApartmentExistsGuards],
-    component: fromContainers.ApartmentDetailComponent
+    component: fromContainers.ApartmentDetailComponent,
   },
   {
     path: 'favourites',
     canActivate: [ApartmentsGuard],
     component: fromContainers.ApartmentFavouritesComponent,
   },
-
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-  ],
-  exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class ApartmentsRoutingModule { }
+export class ApartmentsRoutingModule {}

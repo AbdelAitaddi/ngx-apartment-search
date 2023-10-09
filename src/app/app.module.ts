@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import {CommonModule} from "@angular/common";
+import { CommonModule } from '@angular/common';
 
 // modules
 import { CoreModule } from './core/core.module';
@@ -18,8 +18,8 @@ import { AppComponent } from './core/containers';
     CoreModule.forRoot(),
     BrowserAnimationsModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

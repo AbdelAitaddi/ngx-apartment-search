@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import {CityTypes} from "../../models/city.model";
+
+// models
+import { Apartment } from '../../models';
 
 @Component({
   selector: 'app-apartment-preview-list',
@@ -8,8 +10,6 @@ import {CityTypes} from "../../models/city.model";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApartmentPreviewListComponent {
-  @Input() apartments: any;
-  @Input() city: string | null;
+  @Input() apartments: Apartment[];
   @Input() favourites: string[];
-  @Input() selectedBorough: CityTypes | null;
 }

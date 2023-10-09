@@ -1,20 +1,16 @@
+@use "../../../../../styles/mixins/layout";
+@use "../../../../../styles/base/sizes";
+
 mat-card-title,
 mat-card-content {
-  display: flex;
-  justify-content: center;
+  @include layout.flex();
 }
 
 mat-card-title {
-  margin: 8px 0 12px;
+  margin: sizes.$small 0 sizes.$small-plus;
 }
 
 .form-wrapper {
   width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-  align-items: center;
+  @include layout.flex(row, space-evenly);
 }
-
-
-
