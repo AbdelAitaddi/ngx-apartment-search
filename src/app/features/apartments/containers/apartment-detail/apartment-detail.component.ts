@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-// services
-import { ApartmentFacadeService } from '../../facades';
 
 // rxjs
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+// services
+import { ApartmentFacadeService } from '../../facades';
 
 // models
 import { Apartment } from '../../models';
@@ -26,20 +27,20 @@ export class ApartmentDetailComponent implements OnInit {
   constructor(private facade: ApartmentFacadeService, private location: Location) {}
 
   ngOnInit() {
-    this.viewModel$ = combineLatest([this.facade.selectedApartment$, this.facade.favourites$]).pipe(
-      map(([apartment, favourites]) => ({
+    this.viewModel$ = combineLatest([this.facade.selectedApartment$, this.facade.favouritesIds$]).pipe(
+      map(([apartment, favouriteIds]) => ({
         apartment,
-        selected: favourites.includes(apartment!.id!),
+        selected: !!(apartment?.id && favouriteIds.includes(apartment.id)),
       }))
     );
   }
 
-  onSave(apartmentId: string) {
-    this.facade.addToFavourites(apartmentId);
+  onSave(apartment: Apartment) {
+    this.facade.addToFavourites(apartment);
   }
 
-  onRemove(apartmentId: string) {
-    this.facade.removeFromFavourites(apartmentId);
+  onRemove(apartment: Apartment) {
+    this.facade.removeFromFavourites(apartment);
   }
 
   onBack() {

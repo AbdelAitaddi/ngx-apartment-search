@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 // models
 import { Apartment } from '../../models';
-import { App_Route } from '../../../../core/models';
-import { Icon_list } from '../../../../core/services/icon.service';
+
+// config
+import { App_Route, Icons } from '../../../../core/config';
 
 @Component({
   selector: 'app-apartment-preview',
@@ -12,11 +13,11 @@ import { Icon_list } from '../../../../core/services/icon.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApartmentPreviewComponent {
-  @Input({ required: true }) apartment: Apartment;
-  @Input({ required: true }) favourites: string[];
+  @Input() apartment: Apartment;
+  @Input() isFavourite: boolean = false;
 
   apartmentDetailRoute = App_Route.apartment_detail;
-  Icon_list = Icon_list;
+  Icon_list = Icons;
 
   get apartmentAddress() {
     const {
@@ -33,9 +34,5 @@ export class ApartmentPreviewComponent {
       localization: { currency },
     } = this.apartment;
     return `${totalRent} ${currency}`;
-  }
-
-  get isFavourite(): boolean {
-    return this.favourites.includes(this.apartment.id!);
   }
 }

@@ -1,18 +1,21 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-
-// services
-import { ApartmentFacadeService } from '../../facades';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 // rxjs
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+// services
+import { ApartmentFacadeService } from '../../facades';
+
 // models
-import { All_Cities, Apartment, CityTypesFilter } from '../../models';
+import { Apartment, CityTypesFilter } from '../../models';
+
+// config
+import { All_Cities } from '../../config';
 
 interface ViewModel {
   favouritesApartments: Apartment[];
-  favourites: string[];
+  favouritesIds: string[];
   selectedCity: CityTypesFilter;
   selectedBorough: string | typeof All_Cities;
   loading: boolean;
@@ -24,23 +27,21 @@ interface ViewModel {
   styleUrls: ['./apartment-favourites.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApartmentFavouritesComponent {
+export class ApartmentFavouritesComponent implements OnInit {
   viewModel$: Observable<ViewModel>;
-
-  constructor(private facade: ApartmentFacadeService) {}
 
   ngOnInit() {
     this.viewModel$ = combineLatest([
-      this.facade.favouritesApartments$,
       this.facade.favourites$,
+      this.facade.favouritesIds$,
       this.facade.loading$,
       this.facade.loaded$,
       this.facade.selectedCity$,
       this.facade.selectedBorough$,
     ]).pipe(
-      map(([favouritesApartments, favourites, loading, loaded, selectedCity, selectedBorough]) => ({
+      map(([favouritesApartments, favouritesIds, loading, loaded, selectedCity, selectedBorough]) => ({
         favouritesApartments,
-        favourites,
+        favouritesIds,
         loading,
         loaded,
         selectedCity,
@@ -48,4 +49,6 @@ export class ApartmentFavouritesComponent {
       }))
     );
   }
+
+  constructor(private facade: ApartmentFacadeService) {}
 }

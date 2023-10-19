@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
 
 // models
-import { Apartment } from '../models';
+import { CityTypesFilter, Statistics } from '../models';
+
+// config
+import { All_Cities } from '../config';
 
 // services
 import { ApartmentFacadeService } from '../facades';
 
 // rxjs
-import { of, Observable, EMPTY } from 'rxjs';
-import { switchMap, catchError, take, tap, filter } from 'rxjs/operators';
-import { App_Route } from '../../../core/models';
+import { of, Observable, combineLatest } from 'rxjs';
+import { switchMap, catchError, take } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -18,30 +20,29 @@ import { App_Route } from '../../../core/models';
 export class ApartmentsGuard implements CanActivate {
   constructor(private facade: ApartmentFacadeService, private router: Router) {}
 
-  canActivate(): Observable<boolean> {
-    return this.checkStore().pipe(
+  canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
+    const cityId = route.queryParams['city'] || All_Cities;
+    return this.checkStore(cityId);
+  }
+
+  checkStore(cityId: CityTypesFilter): Observable<boolean> {
+    return combineLatest([
+      this.facade.loaded$.pipe(take(1)),
+      this.facade.selectedCity$.pipe(take(1)),
+      this.facade.statistics$,
+    ]).pipe(
+      switchMap(([loaded, selectedCity]: [boolean, CityTypesFilter, Statistics]) =>
+        loaded && selectedCity === cityId ? of(loaded) : this.loadApartments(cityId)
+      )
+    );
+  }
+
+  loadApartments(cityId: CityTypesFilter): Observable<boolean> {
+    return this.facade.getApartments(cityId).pipe(
       switchMap(() => of(true)),
-      catchError(() => of(false))
-    );
-  }
-
-  checkStore() {
-    return this.facade.loaded$.pipe(
-      tap((loaded: boolean) => {
-        if (!loaded) {
-          this.loadApartments().subscribe();
-        }
-      }),
-      filter(Boolean),
-      take(1)
-    );
-  }
-
-  loadApartments(): Observable<Apartment[]> {
-    return this.facade.getApartments().pipe(
       catchError(() => {
-        this.router.navigate([App_Route.about]).then();
-        return EMPTY;
+        this.router.navigateByUrl('/app-unavailable', { skipLocationChange: true }).then();
+        return of(false);
       })
     );
   }

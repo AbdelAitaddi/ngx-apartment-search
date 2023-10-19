@@ -1,22 +1,33 @@
-import { APP_INITIALIZER, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, TitleStrategy } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 // modules
-import { MaterialModule } from '../shared/material.module';
+import { MaterialCoreModule } from '../shared/functional/material-core/material-core.module';
+import { TranslationModule } from '../shared/functional/translation/translation.module';
 
 // services
-import { IconService } from './services/icon.service';
-import { TemplatePageTitleStrategy } from './services';
-import { throwIfAlreadyLoaded } from './helpers/modules-import-check';
+import { throwIfAlreadyLoaded } from './helpers';
 
 // Components
 import * as fromContainers from './containers';
 import * as fromComponents from './components';
 
+// config
+import {
+  BASE_HREF_PROVIDER,
+  BROWSER_LOCATION_PROVIDER,
+  ERROR_HANDLER_PROVIDER,
+  ICONS_INIT_PROVIDER,
+  LOCALE_ID_PROVIDER,
+  STORAGE_PROVIDER,
+  TITLE_STRATEGY_PROVIDER,
+  WINDOW_PROVIDER,
+} from '../app.config';
+
 @NgModule({
-  imports: [CommonModule, RouterModule, MaterialModule],
-  declarations: [...fromContainers.containers, fromComponents.NavItemComponent],
+  imports: [CommonModule, RouterModule, MaterialCoreModule, TranslationModule],
+  declarations: [...fromContainers.containers, fromComponents.components],
 })
 export class CoreModule {
   constructor(
@@ -31,16 +42,14 @@ export class CoreModule {
     return {
       ngModule: CoreModule,
       providers: [
-        {
-          provide: APP_INITIALIZER,
-          useFactory: (iconService: IconService) => () => iconService.registerIcons(),
-          deps: [IconService],
-          multi: true,
-        },
-        {
-          provide: TitleStrategy,
-          useClass: TemplatePageTitleStrategy,
-        },
+        BASE_HREF_PROVIDER,
+        LOCALE_ID_PROVIDER,
+        ICONS_INIT_PROVIDER,
+        TITLE_STRATEGY_PROVIDER,
+        ERROR_HANDLER_PROVIDER,
+        WINDOW_PROVIDER,
+        STORAGE_PROVIDER,
+        BROWSER_LOCATION_PROVIDER,
       ],
     };
   }

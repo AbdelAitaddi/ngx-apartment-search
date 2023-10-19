@@ -1,6 +1,21 @@
-<div class="apartment-count">{{ apartments.length }} Apartments</div>
+<div class="apartment-count" *ngIf="apartments.length || showLocation">
+  {{ apartments.length }} {{ 'i18n.apartments.listPage.headline.text' | translate }}
+  <ng-container *ngIf="showLocation && statistics?.[city] ">
+    {{ 'i18n.core.vocabulary.of.text' | translate }} {{ statistics[city] }}
+    {{ 'i18n.core.vocabulary.in.text' | translate }}
+    {{ (isCity ? city : ('i18n.core.vocabulary.deutschland' | translate)) | uppercase }}
+  </ng-container>
+</div>
 
 <div class="container">
-  <app-apartment-preview *ngFor="let apartment of apartments" [apartment]="apartment" [favourites]="favourites">
+  <app-apartment-preview
+    *ngFor="let apartment of apartments"
+    [apartment]="apartment"
+    [isFavourite]="isFavourite(apartment)"
+  >
   </app-apartment-preview>
+</div>
+
+<div class="allDataLoaded" *ngIf="allDataLoaded && apartments.length">
+  {{ 'i18n.core.vocabulary.allDataLoaded.text' | translate }}
 </div>

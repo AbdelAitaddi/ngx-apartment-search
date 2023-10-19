@@ -20,3 +20,10 @@
     font-size: sizes.$medium;
   }
 }
+
+.allDataLoaded {
+  display: flex;
+  margin: sizes.$medium;
+  justify-content: center;
+  font-weight: bold;
+}

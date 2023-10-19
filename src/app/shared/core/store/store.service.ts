@@ -9,7 +9,7 @@ export const initial_State = new InjectionToken('initialState');
 @Injectable()
 export abstract class Store<T> implements OnDestroy {
   protected subject: BehaviorSubject<T>;
-  protected store: Observable<T>;
+  store: Observable<T>;
 
   protected constructor(@Inject(initial_State) private initialState: T) {
     this.subject = new BehaviorSubject<T>(this.initialState);

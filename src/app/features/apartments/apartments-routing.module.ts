@@ -10,6 +10,7 @@ import { ApartmentsGuard, ApartmentExistsGuards } from './guard';
 const routes: Routes = [
   {
     path: 'list',
+    title: 'i18n.core.pageTitle.apartments',
     canActivate: [ApartmentsGuard],
     children: [
       {
@@ -24,12 +25,13 @@ const routes: Routes = [
   },
   {
     path: 'detail/:apartmentId',
+    title: 'i18n.core.pageTitle.apartmentDetail',
     canActivate: [ApartmentExistsGuards],
     component: fromContainers.ApartmentDetailComponent,
   },
   {
     path: 'favourites',
-    canActivate: [ApartmentsGuard],
+    title: 'i18n.core.pageTitle.favourites',
     component: fromContainers.ApartmentFavouritesComponent,
   },
 ];

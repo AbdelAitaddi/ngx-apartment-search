@@ -12,34 +12,28 @@ import { MatLineModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
 
+const modules = [
+  MatInputModule,
+  MatFormFieldModule,
+  MatCardModule,
+  MatButtonModule,
+  MatSelectModule,
+  MatMenuModule,
+  MatSidenavModule,
+  MatListModule,
+  MatIconModule,
+  MatToolbarModule,
+  MatProgressSpinnerModule,
+  MatDividerModule,
+  MatLineModule,
+  MatTooltipModule,
+  MatDialogModule,
+];
 @NgModule({
-  imports: [
-    MatInputModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatCardModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatListModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatProgressSpinnerModule,
-  ],
-  exports: [
-    MatInputModule,
-    MatCardModule,
-    MatButtonModule,
-    MatSidenavModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatProgressSpinnerModule,
-    MatListModule,
-    MatDividerModule,
-    MatLineModule,
-    MatSelectModule,
-    MatTooltipModule,
-  ],
+  imports: [...modules],
+  exports: [...modules],
 })
-export class MaterialModule {}
+export class MaterialCoreModule {}
