@@ -9,19 +9,10 @@ import { ApartmentsGuard, ApartmentExistsGuards } from './guard';
 
 const routes: Routes = [
   {
-    path: 'list',
+    path: '',
     title: 'i18n.core.pageTitle.apartments',
     canActivate: [ApartmentsGuard],
-    children: [
-      {
-        path: '',
-        component: fromContainers.ApartmentListComponent,
-      },
-      {
-        path: ':cityId',
-        component: fromContainers.ApartmentListComponent,
-      },
-    ],
+    component: fromContainers.ApartmentListComponent,
   },
   {
     path: 'detail/:apartmentId',

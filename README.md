@@ -17,7 +17,7 @@ this Boilerplate project consists of writing a Angular with the purpose getting 
 - Smart und Dumb Components
 - reactive programing.
 - using own rxjs store. (state Management)
-- Angular Material
+- Angular Material 
 
 this Boilerplate project consists of writing a Angular with the purpose to learn how to design an Angular application with a focus on maintaining sustainable development speed and the ease of adding new features in the long run.
 This application present high-level recommendations for a well-designed Angular application architecture based on best practices and battle-tested patterns.

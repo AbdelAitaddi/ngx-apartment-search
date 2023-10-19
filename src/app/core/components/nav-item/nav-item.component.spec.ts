@@ -25,7 +25,7 @@ describe('NavItemComponent', () => {
     TestBed.configureTestingModule({
       declarations: [NavItemComponent, MockPipe(TranslatePipe), MockComponent(MatIcon)],
       imports: [MockModule(MaterialCoreModule), RouterTestingModule, NoopAnimationsModule],
-      providers: [provideRouter([{ path: 'apartment/list', component: DummyComponent }])],
+      providers: [provideRouter([{ path: 'apartments', component: DummyComponent }])],
     })
       .overrideComponent(NavItemComponent, {
         set: { changeDetection: ChangeDetectionStrategy.Default },

@@ -27,9 +27,7 @@ export class ApartmentFacadeService {
     private statisticsService: StatisticsService,
     private apartmentHelper: ApartmentHelperService,
     private store: ApartmentsStore
-  ) {
-    this.store.store.subscribe(console.warn);
-  }
+  ) {}
 
   set apartments(apartments: Apartment[]) {
     this.store.set('apartments', apartments);
