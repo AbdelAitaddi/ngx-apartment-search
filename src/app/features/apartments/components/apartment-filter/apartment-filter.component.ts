@@ -3,7 +3,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { FormBuilder, FormControl } from '@angular/forms';
 
 // models
-import { All_Cities, CityTypes, CityTypesFilter } from '../../models';
+import { CityTypes, CityTypesFilter } from '../../models';
+
+// config
+import { All_Cities } from '../../config';
 
 // rxjs
 import { distinctUntilChanged } from 'rxjs/operators';
@@ -29,7 +32,10 @@ export class ApartmentFilterComponent implements OnInit {
 
   private fb = new FormBuilder();
 
-  form = this.fb.group({
+  form = this.fb.group<{
+    city: CityTypesFilter;
+    borough: string | typeof All_Cities;
+  }>({
     city: All_Cities,
     borough: All_Cities,
   });

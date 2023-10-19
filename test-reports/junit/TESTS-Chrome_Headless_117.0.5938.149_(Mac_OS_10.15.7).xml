@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<testsuite name="Chrome Headless 117.0.5938.149 (Mac OS 10.15.7)" package="" timestamp="2023-10-16T13:10:32" id="0" hostname="karim-macbook" tests="9" errors="0" failures="0" time="10.886">
+  <properties>
+    <property name="browser.fullName" value="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/117.0.5938.149 Safari/537.36"/>
+  </properties>
+  <testcase name="AboutComponent should emit toggle event on its output when the navigation item is clicked" time="5.769" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).AboutComponent"/>
+  <testcase name="NavItemComponent should render property binding inputs" time="1.929" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).NavItemComponent"/>
+  <testcase name="NavItemComponent should emit toggle event on its output when the navigation item is clicked" time="0.475" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).NavItemComponent"/>
+  <testcase name="NavItemComponent should display language selection menu" time="0.927" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).NavItemComponent"/>
+  <testcase name="NavItemComponent should emit selected language event on its output when change language is clicked" time="0.56" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).NavItemComponent"/>
+  <testcase name="NavItemComponent should display current language" time="0.461" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).NavItemComponent"/>
+  <testcase name="AppComponent should initialize component properties after onInit" time="0.437" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).AppComponent"/>
+  <testcase name="AppComponent should select language" time="0.233" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).AppComponent"/>
+  <testcase name="PageNotFoundComponent should emit toggle event on its output when the navigation item is clicked" time="0.095" classname="Chrome_Headless_117_0_5938_149_(Mac_OS_10_15_7).PageNotFoundComponent"/>
+  <system-out>
+    <![CDATA[
+]]>
+  </system-out>
+  <system-err/>
+</testsuite>

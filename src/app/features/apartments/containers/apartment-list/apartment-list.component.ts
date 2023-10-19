@@ -1,29 +1,32 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Params } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
-// services
-import { ApartmentFacadeService } from '../../facades';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
 // rxjs
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+// services
+import { ApartmentFacadeService } from '../../facades';
+
 // models
-import { All_Cities, Apartment, CityTypesFilter } from '../../models';
-import { App_Route } from '../../../../core/models';
-import { CityTypes } from '../../models';
+import { CityTypes, Apartment, CityTypesFilter, Statistics } from '../../models';
+
+// config
+import { All_Cities } from '../../config';
 
 export interface ViewModel {
-  favourites: string[];
+  favouritesIds: string[];
   selectedCity: CityTypesFilter;
   selectedBorough: string | typeof All_Cities;
   loading: boolean;
   loaded: boolean;
+  allDataLoaded: boolean;
   boroughs: string[];
   cities: CityTypes[];
   apartmentByCity: Apartment[];
+  statistics: Statistics;
 }
 
 @UntilDestroy()
@@ -35,50 +38,67 @@ export interface ViewModel {
 export class ApartmentListComponent implements OnInit {
   viewModel$: Observable<ViewModel>;
 
-  constructor(private facade: ApartmentFacadeService, private route: ActivatedRoute, private location: Location) {}
-
   ngOnInit() {
     this.viewModel$ = combineLatest([
-      this.facade.favourites$,
+      this.facade.favouritesIds$,
       this.facade.selectedCity$,
       this.facade.selectedBorough$,
       this.facade.loading$,
       this.facade.loaded$,
+      this.facade.allDataLoaded$,
       this.facade.boroughs$,
       this.facade.cities$,
-      this.facade.apartmentByCity$,
+      this.facade.apartments$,
+      this.facade.statistics$,
     ]).pipe(
-      map(([favourites, selectedCity, selectedBorough, loading, loaded, boroughs, cities, apartmentByCity]) => ({
-        favourites,
-        selectedCity,
-        selectedBorough,
-        loading,
-        loaded,
-        boroughs,
-        cities,
-        apartmentByCity,
-      }))
+      map(
+        ([
+          favouritesIds,
+          selectedCity,
+          selectedBorough,
+          loading,
+          loaded,
+          allDataLoaded,
+          boroughs,
+          cities,
+          apartmentByCity,
+          statistics,
+        ]) => ({
+          favouritesIds,
+          selectedCity,
+          selectedBorough,
+          loading,
+          loaded,
+          allDataLoaded,
+          boroughs,
+          cities,
+          apartmentByCity,
+          statistics,
+        })
+      )
     );
 
-    this.route.params
+    this.route.queryParams
       .pipe(
         untilDestroyed(this),
-        map((params: Params) => params['cityId'] || All_Cities)
+        map((params: Params) => params['city'] || All_Cities)
       )
       .subscribe((selectedCity) => {
         this.facade.updateSelectedCity(selectedCity);
       });
   }
 
+  onScrollDown() {
+    this.facade.loadMore().subscribe();
+  }
+
   onBoroughSelected(boroughs: string | typeof All_Cities) {
     this.facade.updateSelectedBorough(boroughs);
   }
 
-  onCitySelected(selectedCity: CityTypesFilter) {
-    const path = selectedCity ? `/${selectedCity.toLowerCase()}` : '';
-    this.location.go(`${App_Route.apartment_List}${path}`);
-
-    this.facade.updateSelectedCity(selectedCity);
-    this.facade.updateSelectedBorough(All_Cities);
+  onCitySelected(city: CityTypesFilter) {
+    this.router.navigate([], { queryParams: { city } }).then(() => this.facade.onCitySelected(city).subscribe());
   }
+
+  constructor(private facade: ApartmentFacadeService, private route: ActivatedRoute, private router: Router) {}
 }

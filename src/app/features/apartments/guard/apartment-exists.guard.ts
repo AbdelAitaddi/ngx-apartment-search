@@ -3,15 +3,16 @@ import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 
 // models
 import { Apartment } from '../models';
-import { App_Route } from '../../../core/models';
+import { App_Route } from '../../../core/config';
 
 // services
 import { ApartmentsStore } from '../store';
 import { ApartmentFacadeService } from '../facades';
+import { NotFoundError } from '../../../core/helpers';
 
 // rxjs
 import { Observable, of } from 'rxjs';
-import { map, take, switchMap, catchError } from 'rxjs/operators';
+import { take, switchMap, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -21,11 +22,7 @@ export class ApartmentExistsGuards implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean> {
     const { apartmentId } = route.params;
-
-    return this.checkStore(apartmentId).pipe(
-      switchMap(() => of(true)),
-      catchError(() => of(false))
-    );
+    return this.checkStore(apartmentId);
   }
 
   checkStore(apartmentId: string) {
@@ -41,11 +38,15 @@ export class ApartmentExistsGuards implements CanActivate {
     );
   }
 
-  getApartmentById(apartmentId: string) {
+  getApartmentById(apartmentId: string): Observable<boolean> {
     return this.facade.getApartment(apartmentId).pipe(
       switchMap(() => of(true)),
-      catchError(() => {
-        this.router.navigate([App_Route.apartment_List]).then();
+      catchError((error) => {
+        if (error instanceof NotFoundError) {
+          this.router.navigate([App_Route.apartment_List]).then();
+        } else {
+          this.router.navigateByUrl('/app-unavailable', { skipLocationChange: true }).then();
+        }
         return of(false);
       })
     );
@@ -53,14 +54,14 @@ export class ApartmentExistsGuards implements CanActivate {
 
   hasApartment(apartmentId: string): Observable<boolean> {
     return this.facade.apartments$.pipe(
-      map((apartments: Apartment[]) => {
+      switchMap((apartments: Apartment[]) => {
         const apartmentExists = apartments.find((apartment) => apartment.id === apartmentId);
         if (apartmentExists) {
           this.facade.selectedApartment = apartmentExists;
-          return true;
+          return of(true);
         }
-        this.router.navigate([App_Route.apartment_List]).then();
-        return false;
+
+        return this.getApartmentById(apartmentId);
       })
     );
   }

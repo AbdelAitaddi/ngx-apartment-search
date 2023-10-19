@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 // modules
 import { CoreModule } from './core/core.module';
 import { AppRoutingModule } from './app-routing.module';
+import { TranslationModule } from './shared/functional/translation/translation.module';
 
 // Components
 import { AppComponent } from './core/containers';
@@ -15,10 +16,11 @@ import { AppComponent } from './core/containers';
   imports: [
     CommonModule,
     BrowserModule,
-    CoreModule.forRoot(),
-    BrowserAnimationsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
+    CoreModule.forRoot(),
+    TranslationModule.forRoot(),
   ],
   bootstrap: [AppComponent],
 })

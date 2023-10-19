@@ -17,7 +17,13 @@ const routes: Routes = [
   },
   {
     path: 'about',
+    title: 'i18n.core.pageTitle.about',
     component: fromContainers.AboutComponent,
+  },
+  {
+    path: 'app-unavailable',
+    title: 'i18n.core.pageTitle.appUnavailable',
+    component: fromContainers.AppUnavailableComponent,
   },
   {
     path: '**',
@@ -26,6 +32,6 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, useHash: false })],
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })],
 })
 export class AppRoutingModule {}

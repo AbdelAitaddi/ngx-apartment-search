@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 
 // models
 import { Apartment } from '../../models';
-import { Icon_list } from '../../../../core/services/icon.service';
+import { Icons } from '../../../../core/config';
 
 @Component({
   selector: 'app-apartment-item',
@@ -13,11 +13,11 @@ import { Icon_list } from '../../../../core/services/icon.service';
 export class ApartmentItemComponent {
   @Input() apartment: Apartment;
   @Input() selected: boolean = false;
-  @Output() save = new EventEmitter<string>();
-  @Output() remove = new EventEmitter<string>();
+  @Output() save = new EventEmitter<Apartment>();
+  @Output() remove = new EventEmitter<Apartment>();
   @Output() back = new EventEmitter<void>();
 
-  Icon_list = Icon_list;
+  Icon_list = Icons;
 
   get apartmentAddress() {
     const {
@@ -45,11 +45,11 @@ export class ApartmentItemComponent {
     return `baseRent: ${baseRent} +  operational Costs: ${operationalCosts}`;
   }
 
-  toggleFavourite(apartmentId: string) {
+  toggleFavourite(apartment: Apartment) {
     if (this.selected) {
-      this.remove.emit(apartmentId);
+      this.remove.emit(apartment);
     } else {
-      this.save.emit(apartmentId);
+      this.save.emit(apartment);
     }
   }
 }
