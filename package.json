@@ -11,6 +11,7 @@
     "db": "json-server --watch db.json --delay 1000",
     "start-server": "angular-http-server --cors --path ./dist -p 4200",
     "format:fix": "pretty-quick",
+    "prepare": "husky install",
     "test": "ng test"
   },
   "private": false,
