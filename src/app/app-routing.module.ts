@@ -8,11 +8,11 @@ import * as fromContainers from './core/containers';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'apartment/list',
+    redirectTo: 'apartments',
     pathMatch: 'full',
   },
   {
-    path: 'apartment',
+    path: 'apartments',
     loadChildren: () => import('./features/apartments/apartments.module').then((m) => m.ApartmentsModule),
   },
   {

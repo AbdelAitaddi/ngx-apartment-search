@@ -14,22 +14,22 @@ import { GlobalLoadingIndicatorService } from '../../../core/services';
 import { ApartmentHelperService } from '../helpers/apartment-helper.service';
 
 // rxjs
-import { combineLatest, finalize, Observable, of, retry, shareReplay, switchMap, throwError } from 'rxjs';
-import { catchError, combineLatestWith, map, startWith, take, tap } from 'rxjs/operators';
+import { finalize, Observable, of, retry, shareReplay, Subject, switchMap, throwError, withLatestFrom } from 'rxjs';
+import { catchError, combineLatestWith, distinctUntilChanged, map, startWith, take, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApartmentFacadeService {
+  private onScrollSubject$ = new Subject<number>();
+
   constructor(
     private loadingIndicatorService: GlobalLoadingIndicatorService,
     private apartmentsService: ApartmentsService,
     private statisticsService: StatisticsService,
     private apartmentHelper: ApartmentHelperService,
     private store: ApartmentsStore
-  ) {
-    this.store.store.subscribe(console.warn);
-  }
+  ) {}
 
   set apartments(apartments: Apartment[]) {
     this.store.set('apartments', apartments);
@@ -125,6 +125,14 @@ export class ApartmentFacadeService {
     );
   }
 
+  get onScrollEvent$() {
+    return this.onScrollSubject$.pipe(
+      withLatestFrom(this.selectedCity$),
+      distinctUntilChanged(),
+      switchMap(([pageNumber, selectedCity]) => this.getApartments(selectedCity, pageNumber))
+    );
+  }
+
   // reducers
 
   updateSelectedBorough(selectedBorough: string | typeof All_Cities) {
@@ -133,10 +141,6 @@ export class ApartmentFacadeService {
 
   updateSelectedCity(selectedCity: CityTypesFilter) {
     this.selectedCity = selectedCity;
-  }
-
-  updatePageNumber(pageNumber: number) {
-    this.pageNumber = pageNumber;
   }
 
   onCitySelected(city: CityTypesFilter) {
@@ -163,12 +167,8 @@ export class ApartmentFacadeService {
   }
 
   loadMore() {
-    return combineLatest([this.selectedCity$, this.pageNumber$]).pipe(
-      take(1),
-      switchMap(([city, currentPage]) => {
-        return this.getApartments(city, currentPage + 1);
-      })
-    );
+    const nextPage = this.store.value.pageNumber + 1;
+    this.onScrollSubject$.next(nextPage);
   }
 
   // side effects
@@ -181,10 +181,7 @@ export class ApartmentFacadeService {
       take(1),
       map((apartments: Apartment[]) => apartments.filter((apartment: Apartment) => apartment.availableFromNowOn)),
       tap((LoadedApartments: Apartment[]) => {
-        const apartments =
-          nextPage === this.store.value.pageNumber
-            ? LoadedApartments
-            : [...this.store.value.apartments, ...LoadedApartments];
+        const apartments = nextPage === 1 ? LoadedApartments : [...this.store.value.apartments, ...LoadedApartments];
         this.store.patch({
           apartments,
           loaded: true,

@@ -86,10 +86,12 @@ export class ApartmentListComponent implements OnInit {
       .subscribe((selectedCity) => {
         this.facade.updateSelectedCity(selectedCity);
       });
+
+    this.facade.onScrollEvent$.pipe(untilDestroyed(this)).subscribe();
   }
 
   onScrollDown() {
-    this.facade.loadMore().subscribe();
+    this.facade.loadMore();
   }
 
   onBoroughSelected(boroughs: string | typeof All_Cities) {

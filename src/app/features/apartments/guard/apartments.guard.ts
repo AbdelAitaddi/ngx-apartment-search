@@ -33,17 +33,15 @@ export class ApartmentsGuard implements CanActivate {
     ]).pipe(
       switchMap(([loaded, selectedCity]: [boolean, CityTypesFilter, Statistics]) =>
         loaded && selectedCity === cityId ? of(loaded) : this.loadApartments(cityId)
-      )
-    );
-  }
-
-  loadApartments(cityId: CityTypesFilter): Observable<boolean> {
-    return this.facade.getApartments(cityId).pipe(
-      switchMap(() => of(true)),
+      ),
       catchError(() => {
         this.router.navigateByUrl('/app-unavailable', { skipLocationChange: true }).then();
         return of(false);
       })
     );
+  }
+
+  loadApartments(cityId: CityTypesFilter): Observable<boolean> {
+    return this.facade.getApartments(cityId).pipe(switchMap(() => of(true)));
   }
 }

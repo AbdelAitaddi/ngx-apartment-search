@@ -1,14 +1,15 @@
 <ng-container *ngIf="viewModel$ | async as vm">
   <div
     class="container"
-    infinite-scroll
+    infiniteScroll
+    cdkScrollable
     #infiniteScrollContainer
+    [fromRoot]="true"
     [infiniteScrollContainer]="infiniteScrollContainer"
     [infiniteScrollDistance]="1"
-    [infiniteScrollUpDistance]="2"
-    [infiniteScrollThrottle]="300"
-    [scrollWindow]="false"
+    [infiniteScrollThrottle]="200"
     [immediateCheck]="true"
+    [scrollWindow]="false"
     [alwaysCallback]="true"
     [infiniteScrollDisabled]="vm.allDataLoaded"
     (scrolled)="onScrollDown()"
