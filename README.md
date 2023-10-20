@@ -34,7 +34,7 @@ This application present high-level recommendations for a well-designed Angular 
 ## Installation
 
 1- Run first `npm ci`.  
-2- Run `npm run db` for a dev server and then `ng s` for database.  
+2- Run `ng s` for a dev server and then `npm run db` for database.  
 3 -Navigate to `http://localhost:4200/`.  
 
 The application will automatically reload if you change any of the source files.
