@@ -1,4 +1,4 @@
-# NgxApartmentSearch ⚡
+# Angular Architecture: Modular pattern ⚡
 
 > Boilerplate project for getting started with Modular design, Component / Container architecture, own reactive state management. Design was made with Angular material.
 
